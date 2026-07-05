@@ -14,7 +14,15 @@
   <main id="app">
     <section class="form-section">
       <h2>スキル予測フォーム</h2>
-      <input type="text" id="skillInput" placeholder="スキル名を入力してください">
+      <input list="skillList" id="skillInput" placeholder="スキル名を入力してください">
+      <datalist id="skillList">
+        <option value="溜め段階解放">
+        <option value="弾導強化">
+        <option value="スタミナ急速回復">
+        <option value="体術">
+        <option value="集中">
+        <option value="弓溜め段階解放">
+      </datalist>
       <button id="predictBtn">予測する</button>
       <div id="result"></div>
     </section>
