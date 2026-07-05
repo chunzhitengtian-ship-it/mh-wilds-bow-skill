@@ -20,3 +20,6 @@ window.predict = async () => {
   const result = await res.json();
   document.getElementById("app").innerHTML = ResultView(result);
 };
+export default function Home() {
+  return <h1>MH Wilds Bow Skill Predictor</h1>;
+}
