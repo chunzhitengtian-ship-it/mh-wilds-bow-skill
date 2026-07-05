@@ -1,64 +1,127 @@
-body {
-  font-family: "Segoe UI", "Hiragino Sans", sans-serif;
-  background-color: #f9fafc;
-  color: #333;
-  margin: 0;
-  padding: 0;
-  text-align: center;
+:root{
+  --bg:#efe6d8;
+  --panel:#f6efe6;
+  --accent:#8b5a2b;
+  --accent-dark:#6b3f20;
+  --muted:#6b6b6b;
+  --card:#fff6ee;
+  --gold:#d4a24a;
+  --shadow: 0 6px 18px rgba(0,0,0,0.12);
+  --radius:10px;
+  --font-sans: "Noto Sans JP", "Segoe UI", "Hiragino Kaku Gothic ProN", sans-serif;
+  --font-deco: "Sawarabi Mincho", "Hiragino Mincho ProN", serif;
 }
 
-header {
-  background-color: #2c3e50;
-  color: white;
-  padding: 1rem 0;
+/* リセットと基本 */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:var(--font-sans);background:linear-gradient(180deg,var(--bg),#e9dfc9);color:#2b2b2b}
+.wrap{min-height:100%;display:flex;flex-direction:column}
+
+/* Header */
+.mh-header{
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(90deg,var(--accent-dark),var(--accent));
+  color:#fff;padding:18px 24px;border-bottom:6px solid rgba(0,0,0,0.08);
+  box-shadow:var(--shadow);
+}
+.crest{width:64px;height:64px;object-fit:contain;border-radius:8px;border:2px solid rgba(255,255,255,0.08)}
+.title{margin:0;font-size:1.4rem;letter-spacing:1px}
+.subtitle{margin:2px 0 0;font-size:0.85rem;opacity:0.9}
+.hunter-info{font-size:0.9rem;background:rgba(255,255,255,0.06);padding:6px 10px;border-radius:8px}
+
+/* Layout */
+.container{display:flex;gap:20px;padding:28px;align-items:flex-start}
+.panel{flex:1;background:var(--panel);padding:20px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.sidebar{width:280px;display:flex;flex-direction:column;gap:16px}
+
+/* Form */
+.panel-title{margin:0 0 12px;font-size:1.1rem;color:var(--accent-dark)}
+.form-row{display:flex;gap:10px;align-items:center}
+.input{flex:1;padding:10px 12px;border-radius:8px;border:2px solid rgba(0,0,0,0.06);background:linear-gradient(180deg,#fff,#fff6f0);font-size:1rem}
+.btn{padding:10px 14px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+.btn.primary{background:linear-gradient(180deg,var(--gold),#b8842f);color:#2b2b2b;box-shadow:0 4px 10px rgba(0,0,0,0.12)}
+.btn.primary:hover{filter:brightness(0.98)}
+
+/* Result */
+.result-area{margin-top:18px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.result-card{width:100%;max-width:640px;background:var(--card);padding:14px;border-radius:10px;border-left:6px solid var(--accent);box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+.result-card.success{border-left-color:#2ecc71}
+.result-card.error{border-left-color:#e74c3c}
+
+/* Sidebar cards */
+.card{background:#fff;padding:12px;border-radius:8px;border:1px solid rgba(0,0,0,0.04);box-shadow:0 4px 12px rgba(0,0,0,0.04)}
+.card h3{margin:0 0 8px;font-size:0.95rem;color:var(--accent-dark)}
+
+/* Footer */
+.mh-footer{text-align:center;padding:14px;background:transparent;color:var(--muted);margin-top:auto}
+
+/* 刻印強めスタイル（見出し） */
+.title.carved {
+  font-family: var(--font-deco);
+  font-size: 1.9rem;
+  line-height: 1.1;
+  letter-spacing: 1px;
+  position: relative;
+  display: inline-block;
+  padding: 8px 14px;
+  color: #caa86b;
+  -webkit-text-fill-color: #caa86b;
+  -webkit-text-stroke: 1px rgba(80,50,20,0.9);
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.12),
+    0 4px 8px rgba(0,0,0,0.35);
+  background-image: url('/assets/paper-texture.jpg');
+  background-size: cover;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
-main {
-  padding: 2rem;
+/* 刻印の凹凸（疑似要素でデボス効果） */
+.title.carved::before,
+.title.carved::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
-.form-section {
-  margin-top: 2rem;
+/* 上側ハイライト */
+.title.carved::before {
+  content: attr(data-text);
+  transform: translateY(-2px) translateX(-1px);
+  z-index: -1;
+  filter: blur(0.6px);
+  text-shadow: 0 0 0 rgba(255,255,255,0.85);
+  -webkit-text-stroke: 0.6px rgba(255,255,255,0.85);
+  mix-blend-mode: screen;
 }
 
-input {
-  padding: 0.5rem;
-  font-size: 1rem;
-  width: 250px;
+/* 下側の深い影（刻まれた溝） */
+.title.carved::after {
+  content: attr(data-text);
+  transform: translateY(2px) translateX(1px);
+  z-index: -2;
+  color: rgba(0,0,0,0.55);
+  -webkit-text-stroke: 0.8px rgba(0,0,0,0.55);
+  filter: blur(1.2px);
+  mix-blend-mode: multiply;
 }
 
-button {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  margin-left: 10px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+/* SVGフィルタを使う場合の適用クラス */
+.title.carved[data-emboss="true"] {
+  filter: url(#emboss-filter);
 }
 
-button:hover {
-  background-color: #2980b9;
-}
-
-.result-card {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.result-card.success {
-  background-color: #e8f6ff;
-  border-left: 5px solid #3498db;
-}
-
-.result-card.error {
-  background-color: #ffe8e8;
-  border-left: 5px solid #e74c3c;
+/* レスポンシブ */
+@media(max-width:900px){
+  .container{flex-direction:column}
+  .sidebar{width:100%}
+  .title.carved{font-size:1.4rem}
 }
