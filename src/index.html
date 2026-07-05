@@ -1,36 +1,67 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>MH Wilds 弓スキル予測ラボ</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <header>
-    <h1>MH Wilds 弓スキル予測ラボ</h1>
-  </header>
+  <div class="wrap">
+    <header class="mh-header">
+      <div class="header-left">
+        <img src="/assets/crest.png" alt="crest" class="crest">
+      </div>
+      <div class="header-center">
+        <h1 class="title">MH Wilds 弓スキル予測ラボ</h1>
+        <p class="subtitle">狩人の知識でスキル効果を予測する</p>
+      </div>
+      <div class="header-right">
+        <div class="hunter-info">
+          <span class="hunter-rank">HR 999</span>
+        </div>
+      </div>
+    </header>
 
-  <main id="app">
-    <section class="form-section">
-      <h2>スキル予測フォーム</h2>
-      <input list="skillList" id="skillInput" placeholder="スキル名を入力してください">
-      <datalist id="skillList">
-        <option value="溜め段階解放">
-        <option value="弾導強化">
-        <option value="スタミナ急速回復">
-        <option value="体術">
-        <option value="集中">
-        <option value="弓溜め段階解放">
-      </datalist>
-      <button id="predictBtn">予測する</button>
-      <div id="result"></div>
-    </section>
-  </main>
+    <main class="container">
+      <section class="panel">
+        <h2 class="panel-title">スキル予測フォーム</h2>
 
-  <footer>
-    <small>© 2026 MH Wilds Bow Skill Predictor</small>
-  </footer>
+        <div class="form-row">
+          <input list="skillList" id="skillInput" class="input" placeholder="スキル名を入力してください">
+          <datalist id="skillList">
+            <option value="溜め段階解放">
+            <option value="弾導強化">
+            <option value="スタミナ急速回復">
+            <option value="体術">
+            <option value="集中">
+          </datalist>
+          <button id="predictBtn" class="btn primary">予測する</button>
+        </div>
+
+        <div id="result" class="result-area"></div>
+      </section>
+
+      <aside class="sidebar">
+        <div class="card">
+          <h3>ヒント</h3>
+          <ul>
+            <li>既知のスキル名を入力すると詳細を表示</li>
+            <li>将来的にAI連携で自動生成可能</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>素材</h3>
+          <p>装飾は <code>/assets</code> に画像を置いてください</p>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="mh-footer">
+      <small>© 2026 MH Wilds Bow Skill Predictor</small>
+    </footer>
+  </div>
 
   <script src="/app.js"></script>
 </body>
