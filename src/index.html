@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>巨戟スキル記録（CSV出力対応）</title>
+<title>巨戟スキル記録（属性別テーブル対応）</title>
 <style>
   :root{
     --bg:#0f1724; --panel:#0b1220; --muted:#9aa4b2; --accent:#7dd3fc; --accent-2:#60a5fa;
@@ -12,28 +12,28 @@
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#071022);color:#e6eef6}
-  .wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;padding:28px}
-  header.app-header{width:100%;max-width:1200px;display:flex;align-items:center;gap:16px;margin-bottom:18px}
-  .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);flex-shrink:0}
-  h1{margin:0;font-size:1.15rem;letter-spacing:0.6px}
+  .wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;padding:20px}
+  header.app-header{width:100%;max-width:1200px;display:flex;align-items:center;gap:16px;margin-bottom:12px}
+  .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);flex-shrink:0}
+  h1{margin:0;font-size:1.05rem}
   p.lead{margin:4px 0 0;color:var(--muted);font-size:0.9rem}
-  .main{width:100%;max-width:1200px;display:grid;grid-template-columns:1fr 360px;gap:20px}
-  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--radius);padding:18px;border:1px solid rgba(255,255,255,0.06);box-shadow:var(--shadow);backdrop-filter: blur(6px)}
-  .form-grid{display:grid;grid-template-columns:repeat(2,1fr) 160px;gap:12px;align-items:end}
+  .main{width:100%;max-width:1200px;display:grid;grid-template-columns:1fr 360px;gap:16px}
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--radius);padding:14px;border:1px solid rgba(255,255,255,0.06);box-shadow:var(--shadow);backdrop-filter: blur(6px)}
+  .form-grid{display:grid;grid-template-columns:repeat(2,1fr) 140px;gap:10px;align-items:end}
   .field{display:flex;flex-direction:column;gap:6px}
   label.small{font-size:0.8rem;color:var(--muted)}
-  input[type="text"], input[type="number"], select {padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;outline:none;font-size:0.95rem}
+  input[type="text"], input[type="number"], select {padding:9px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;outline:none;font-size:0.95rem}
   .attrs{grid-column:1 / span 3;display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
   .attr-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:var(--glass);border:1px solid rgba(255,255,255,0.02);cursor:pointer;color:var(--muted);user-select:none}
   .attr-chip input{display:none}
   .attr-chip.active{background:linear-gradient(90deg, rgba(125,211,252,0.08), rgba(96,165,250,0.06));color:var(--accent);border:1px solid rgba(125,211,252,0.18)}
-  .controls{display:flex;gap:10px;align-items:center}
-  .btn{padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#04263b;box-shadow: 0 6px 18px rgba(96,165,250,0.12)}
+  .controls{display:flex;gap:8px;align-items:center}
+  .btn{padding:9px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#04263b;box-shadow: 0 6px 18px rgba(96,165,250,0.12)}
   .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);font-weight:600}
   .btn.danger{background:linear-gradient(90deg,var(--danger),#ef4444);color:#fff}
-  .table-wrap{overflow:auto;margin-top:14px;border-radius:10px}
+  .table-wrap{overflow:auto;margin-top:12px;border-radius:8px}
   table.records{width:100%;border-collapse:collapse;background:transparent}
-  table.records th, table.records td{padding:10px 8px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.92rem;color:#dbeafe}
+  table.records th, table.records td{padding:8px 6px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.9rem;color:#dbeafe}
   table.records thead th{color:var(--muted);font-weight:700;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
   .badge{display:inline-block;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:700}
   .ops button{margin:0 4px;padding:6px 8px;border-radius:8px;border:none;cursor:pointer}
@@ -41,15 +41,14 @@
   .ops .del{background:rgba(251,113,133,0.08);color:var(--danger)}
   .count-controls{display:flex;align-items:center;justify-content:center;gap:6px}
   .small-btn{padding:6px 8px;border-radius:8px;border:none;cursor:pointer;background:rgba(255,255,255,0.02);color:var(--muted)}
-  .sidebar{display:flex;flex-direction:column;gap:12px}
-  .card{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.02)}
+  .sidebar{display:flex;flex-direction:column;gap:10px}
+  .card{padding:10px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.02)}
   .muted{color:var(--muted);font-size:0.9rem}
-  .modal{position:fixed;left:0;top:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:60}
-  .modal.open{display:flex}
-  .modal-card{width:520px;max-width:92%;background:var(--panel);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
-  .suggest-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow:auto;margin-top:8px}
-  .suggest-item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02)}
-  .suggest-item button{background:transparent;border:none;color:var(--danger);cursor:pointer}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+  .tab{padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);cursor:pointer;color:var(--muted)}
+  .tab.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#04263b;font-weight:800}
+  .summary-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .summary-card{padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);font-weight:700}
   @media(max-width:980px){ .main{grid-template-columns:1fr;gap:12px} .form-grid{grid-template-columns:1fr;align-items:stretch} }
 </style>
 </head>
@@ -57,15 +56,11 @@
   <div class="wrap">
     <header class="app-header">
       <div class="logo" aria-hidden="true">
-        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="6" y="42" width="52" height="6" rx="3" fill="#04263b" opacity="0.12"/>
-          <path d="M12 40 L32 8 L52 40 Z" fill="#04263b" opacity="0.12"/>
-          <path d="M32 10 L48 38 L16 38 Z" fill="white" opacity="0.08"/>
-        </svg>
+        <svg viewBox="0 0 64 64" width="36" height="36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="42" width="52" height="6" rx="3" fill="#04263b" opacity="0.12"/><path d="M12 40 L32 8 L52 40 Z" fill="#04263b" opacity="0.12"/></svg>
       </div>
       <div style="flex:1">
-        <h1>巨戟スキル記録（CSV出力対応）</h1>
-        <p class="lead">シリーズスキルを2つ選び、属性と回数を記録します</p>
+        <h1>巨戟スキル記録（属性別テーブル）</h1>
+        <p class="lead">属性ごとの表と集計を表示・CSV出力できます</p>
       </div>
       <div style="width:220px;text-align:right">
         <div class="muted">保存先: localStorage</div>
@@ -117,7 +112,17 @@
           </div>
         </div>
 
-        <div class="table-wrap">
+        <div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div class="tabs" id="attrTabs"></div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="showAllBtn" class="btn ghost">全件表示</button>
+            <button id="exportAttrCsv" class="btn">属性CSV出力</button>
+          </div>
+        </div>
+
+        <div class="summary-row" id="summaryRow" aria-hidden="false"></div>
+
+        <div class="table-wrap" id="tableWrap" style="margin-top:10px">
           <table class="records" aria-label="記録一覧">
             <thead>
               <tr>
@@ -142,25 +147,25 @@
       <aside class="sidebar">
         <div class="card">
           <div style="font-weight:800">使い方</div>
-          <div class="muted" style="margin-top:8px;line-height:1.5">
-            シリーズスキル候補は「候補を編集」から追加・削除できます。候補にない名前も自由入力で記録可能です。記録はブラウザに保存されます。CSV出力ボタンで全記録をダウンロードできます。
+          <div class="muted" style="margin-top:8px;line-height:1.4">
+            タブで属性を選ぶと、その属性を含む記録だけを表示します。<br>
+            「属性CSV出力」は現在選択中の属性の行だけをダウンロードします。全件は上部の CSV ボタンを使用してください。
           </div>
         </div>
 
         <div class="card">
-          <div style="font-weight:800">注意</div>
-          <div class="muted" style="margin-top:8px">
-            localStorage を使用するため、ブラウザや端末が変わると共有されません。
-          </div>
+          <div style="font-weight:800">候補編集</div>
+          <div class="muted" style="margin-top:8px">「候補を編集」でシリーズスキル候補を追加・削除できます。</div>
         </div>
       </aside>
     </div>
 
-    <footer style="margin-top:18px;color:var(--muted);font-size:0.9rem">
-      © 2026 MH Wilds — CSV出力対応
+    <footer style="margin-top:12px;color:var(--muted);font-size:0.9rem">
+      © 2026 MH Wilds — 属性別テーブル対応
     </footer>
   </div>
 
+  <!-- 候補編集モーダル（省略せず同梱） -->
   <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal-card">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -187,22 +192,9 @@
   const ATTRS = ["無","火","水","雷","氷","龍"];
 
   const DEFAULT_SUGGESTS = [
-    "黒龍竜の力",
-    "海竜の滑香",
-    "千刃竜の闘志",
-    "兇爪竜の力",
-    "巨鎧竜の堅示録",
-    "オメガレゾナンス",
-    "暗黒騎士の証",
-    "雷讐竜の闘志",
-    "焔鎧竜の力",
-    "駆錬蛾の反逆",
-    "白鎧竜の脈動",
-    "暗器竜の力",
-    "護鎧刃竜の命脈",
-    "鎧刃竜の剣鱗",
-    "凍峰竜の反逆",
-    "闇騎竜の力"
+    "黒龍竜の力","海竜の滑香","千刃竜の闘志","兇爪竜の力","巨鎧竜の堅示録",
+    "オメガレゾナンス","暗黒騎士の証","雷讐竜の闘志","焔鎧竜の力","駆錬蛾の反逆",
+    "白鎧竜の脈動","暗器竜の力","護鎧刃竜の命脈","鎧刃竜の剣鱗","凍峰竜の反逆","闇騎竜の力"
   ];
 
   const el = id => document.getElementById(id);
@@ -222,11 +214,18 @@
   const addSuggest = el("addSuggest");
   const exportCsvBtn = el("exportCsv");
   const exportCsvTopBtn = el("exportCsvTop");
+  const exportAttrCsvBtn = el("exportAttrCsv");
   const importJsonBtn = el("importJson");
+  const attrTabs = el("attrTabs");
+  const showAllBtn = el("showAllBtn");
+  const summaryRow = el("summaryRow");
+
+  let currentAttr = null; // null = 全件表示, otherwise one of ATTRS
 
   function init(){
     initAttrs();
     initSuggests();
+    renderAttrTabs();
     render();
     bind();
   }
@@ -265,9 +264,7 @@
     try {
       localStorage.setItem(SUGGEST_KEY, JSON.stringify(list));
       populateDatalist(list);
-    } catch(e) {
-      console.error("saveSuggests error", e);
-    }
+    } catch(e) { console.error("saveSuggests error", e); }
   }
 
   function initSuggests(){
@@ -330,63 +327,6 @@
     catch(e){ alert("保存に失敗しました。ストレージ容量を確認してください。"); console.error(e); }
   }
 
-  function render(){
-    const list = loadRecords();
-    recordsBody.innerHTML = "";
-    if(!list.length){
-      const tr = document.createElement("tr");
-      const td = document.createElement("td");
-      td.colSpan = 11;
-      td.style.textAlign = "center";
-      td.style.color = "var(--muted)";
-      td.textContent = "記録はまだありません。";
-      tr.appendChild(td);
-      recordsBody.appendChild(tr);
-      return;
-    }
-    list.forEach(rec => {
-      const tr = document.createElement("tr");
-      const td1 = document.createElement("td"); td1.textContent = rec.skills[0] || ""; tr.appendChild(td1);
-      const td2 = document.createElement("td"); td2.textContent = rec.skills[1] || ""; tr.appendChild(td2);
-      ATTRS.forEach(a => {
-        const td = document.createElement("td");
-        td.innerHTML = rec.attrs && rec.attrs.includes(a) ? '<span class="badge">●</span>' : '';
-        tr.appendChild(td);
-      });
-      const tdCount = document.createElement("td");
-      const wrapper = document.createElement("div"); wrapper.className = "count-controls";
-      const dec = document.createElement("button"); dec.className = "small-btn"; dec.textContent = "−";
-      const span = document.createElement("span"); span.textContent = rec.count; span.style.minWidth = "28px"; span.style.display = "inline-block";
-      const inc = document.createElement("button"); inc.className = "small-btn"; inc.textContent = "+";
-      dec.addEventListener("click", ()=> updateCount(rec.id, Math.max(1, rec.count - 1)));
-      inc.addEventListener("click", ()=> updateCount(rec.id, rec.count + 1));
-      wrapper.appendChild(dec); wrapper.appendChild(span); wrapper.appendChild(inc);
-      tdCount.appendChild(wrapper); tr.appendChild(tdCount);
-      const tdTime = document.createElement("td"); tdTime.textContent = formatTime(rec.time); tr.appendChild(tdTime);
-      const tdOps = document.createElement("td"); tdOps.className = "ops";
-      const view = document.createElement("button"); view.className = "view"; view.textContent = "表示";
-      const del = document.createElement("button"); del.className = "del"; del.textContent = "削除";
-      view.addEventListener("click", ()=> {
-        const attrsText = rec.attrs && rec.attrs.length ? rec.attrs.join(", ") : "なし";
-        alert(
-          `シリーズスキル1: ${rec.skills[0]}\n` +
-          `シリーズスキル2: ${rec.skills[1]}\n` +
-          `属性: ${attrsText}\n` +
-          `回数: ${rec.count}\n` +
-          `時刻: ${formatTime(rec.time)}`
-        );
-      });
-      del.addEventListener("click", ()=> {
-        if(!confirm(`「${rec.skills[0]} / ${rec.skills[1]}」を削除しますか？`)) return;
-        deleteRecord(rec.id);
-      });
-      tdOps.appendChild(view);
-      tdOps.appendChild(del);
-      tr.appendChild(tdOps);
-      recordsBody.appendChild(tr);
-    });
-  }
-
   function collectAttrs(){
     return Array.from(attrsContainer.querySelectorAll("input[type='checkbox']")).filter(i => i.checked).map(i => i.value);
   }
@@ -400,25 +340,12 @@
       alert("シリーズスキルを2つ入力してください");
       return;
     }
-    const rec = {
-      id: generateId(),
-      skills:[s1,s2],
-      attrs: attrs,
-      count: count,
-      time: new Date().toISOString()
-    };
-    const list = loadRecords();
-    list.unshift(rec);
-    saveRecords(list);
+    const rec = { id: generateId(), skills:[s1,s2], attrs: attrs, count: count, time: new Date().toISOString() };
+    const list = loadRecords(); list.unshift(rec); saveRecords(list);
+    // UX: 直後に現在のフィルタに合わせて表示を更新
     render();
-    skill1().value = "";
-    skill2().value = "";
-    countEl().value = "1";
-    skill1().focus();
-    attrsContainer.querySelectorAll("input[type='checkbox']:checked").forEach(cb => {
-      cb.checked = false;
-      cb.parentElement.classList.remove("active");
-    });
+    skill1().value = ""; skill2().value = ""; countEl().value = "1"; skill1().focus();
+    attrsContainer.querySelectorAll("input[type='checkbox']:checked").forEach(cb => { cb.checked = false; cb.parentElement.classList.remove("active"); });
   }
 
   function deleteRecord(id){
@@ -438,8 +365,7 @@
 
   function clearAll(){
     if(!confirm("本当にすべての記録を削除しますか？")) return;
-    saveRecords([]);
-    render();
+    saveRecords([]); render();
   }
 
   function csvEscape(value){
@@ -448,65 +374,42 @@
     return `"${s}"`;
   }
 
-  function exportCsv(){
-    const list = loadRecords();
-    if(!list.length){
-      alert("エクスポートする記録がありません");
-      return;
-    }
+  function exportCsv(list=null, filename="series_skill_records.csv"){
+    const rowsSource = list || loadRecords();
+    if(!rowsSource.length){ alert("エクスポートする記録がありません"); return; }
     const header = ["シリーズスキル1","シリーズスキル2","無","火","水","雷","氷","龍","回数","時刻"];
-    const rows = list.map(r => {
+    const rows = rowsSource.map(r => {
       const row = [r.skills[0], r.skills[1]];
       ATTRS.forEach(a => row.push(r.attrs && r.attrs.includes(a) ? "1" : "0"));
-      row.push(String(r.count));
-      row.push(r.time);
+      row.push(String(r.count)); row.push(r.time);
       return row;
     });
-    const csv = [header, ...rows]
-      .map(r => r.map(cell => csvEscape(cell)).join(","))
-      .join("\n");
+    const csv = [header, ...rows].map(r => r.map(cell => csvEscape(cell)).join(",")).join("\n");
     const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "series_skill_records.csv";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }
+
+  function exportAllCsv(){
+    exportCsv(null, "series_skill_records_all.csv");
+  }
+
+  function exportCurrentAttrCsv(){
+    if(!currentAttr){ alert("属性が選択されていません。タブで属性を選択してください。"); return; }
+    const list = loadRecords().filter(r => r.attrs && r.attrs.includes(currentAttr));
+    exportCsv(list, `series_skill_records_${currentAttr}.csv`);
   }
 
   async function importJson(){
     try {
-      if(!navigator.clipboard || !navigator.clipboard.readText){
-        alert("このブラウザはクリップボード読み取りに対応していません。");
-        return;
-      }
+      if(!navigator.clipboard || !navigator.clipboard.readText){ alert("このブラウザはクリップボード読み取りに対応していません。"); return; }
       const text = await navigator.clipboard.readText();
-      if(!text) {
-        alert("クリップボードに JSON テキストがありません");
-        return;
-      }
+      if(!text){ alert("クリップボードに JSON テキストがありません"); return; }
       const parsed = JSON.parse(text);
-      if(!Array.isArray(parsed)) {
-        alert("JSON は配列形式である必要があります");
-        return;
-      }
-      const normalized = parsed.map(p => ({
-        id: p.id || generateId(),
-        skills: p.skills || ["",""],
-        attrs: Array.isArray(p.attrs) ? p.attrs : [],
-        count: Math.max(1, p.count || 1),
-        time: p.time || new Date().toISOString()
-      }));
-      const list = loadRecords();
-      saveRecords([...normalized, ...list]);
-      render();
-      alert("クリップボードの JSON を取り込みました（先頭に追加）");
-    } catch(e){
-      alert("JSON の取り込みに失敗しました。クリップボードの内容を確認してください。");
-      console.error(e);
-    }
+      if(!Array.isArray(parsed)){ alert("JSON は配列形式である必要があります"); return; }
+      const normalized = parsed.map(p => ({ id: p.id || generateId(), skills: p.skills || ["",""], attrs: Array.isArray(p.attrs) ? p.attrs : [], count: Math.max(1, p.count || 1), time: p.time || new Date().toISOString() }));
+      const list = loadRecords(); saveRecords([...normalized, ...list]); render(); alert("クリップボードの JSON を取り込みました（先頭に追加）");
+    } catch(e){ alert("JSON の取り込みに失敗しました。クリップボードの内容を確認してください。"); console.error(e); }
   }
 
   function addSuggestion(text){
@@ -514,13 +417,8 @@
     if(!t) return;
     const arr = loadSuggests();
     const exists = arr.some(x => x.toLowerCase() === t.toLowerCase());
-    if(exists){
-      alert("既に候補に存在します");
-      return;
-    }
-    arr.unshift(t);
-    saveSuggests(arr);
-    renderSuggestList();
+    if(exists){ alert("既に候補に存在します"); return; }
+    arr.unshift(t); saveSuggests(arr); renderSuggestList();
   }
 
   function loadSuggests(){
@@ -534,93 +432,120 @@
   }
 
   function saveSuggests(list){
-    try {
-      localStorage.setItem(SUGGEST_KEY, JSON.stringify(list));
-      populateDatalist(list);
-    } catch(e) {
-      console.error("saveSuggests error", e);
-    }
+    try { localStorage.setItem(SUGGEST_KEY, JSON.stringify(list)); populateDatalist(list); } catch(e){ console.error("saveSuggests error", e); }
   }
 
-  function generateId(){
-    return 'r-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
-  }
+  function generateId(){ return 'r-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8); }
 
   function formatTime(iso){
-    try {
-      const d = new Date(iso);
-      return d.toLocaleString('ja-JP', {
-        year:'numeric',
-        month:'2-digit',
-        day:'2-digit',
-        hour:'2-digit',
-        minute:'2-digit'
-      });
-    } catch(e){
-      return iso;
-    }
+    try { const d = new Date(iso); return d.toLocaleString('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }); } catch(e){ return iso; }
   }
 
+  // --- 属性タブ / 表示制御 ---
+  function renderAttrTabs(){
+    attrTabs.innerHTML = "";
+    // All tab
+    const allTab = document.createElement("div"); allTab.className = "tab" + (currentAttr===null ? " active" : ""); allTab.textContent = "全件"; allTab.addEventListener("click", ()=> { currentAttr = null; render(); updateTabs(); });
+    attrTabs.appendChild(allTab);
+    ATTRS.forEach(a => {
+      const t = document.createElement("div");
+      t.className = "tab" + (currentAttr===a ? " active" : "");
+      t.textContent = a;
+      t.addEventListener("click", ()=> { currentAttr = a; render(); updateTabs(); });
+      attrTabs.appendChild(t);
+    });
+    updateTabs();
+  }
+
+  function updateTabs(){
+    Array.from(attrTabs.children).forEach(node => {
+      node.classList.remove("active");
+      if(currentAttr === null && node.textContent === "全件") node.classList.add("active");
+      if(currentAttr !== null && node.textContent === currentAttr) node.classList.add("active");
+    });
+    // update export button label
+    exportAttrCsvBtn.textContent = currentAttr ? `CSV出力 (${currentAttr})` : "属性CSV出力";
+  }
+
+  // Render table filtered by currentAttr (null = all)
+  function render(){
+    const list = loadRecords();
+    // summary
+    renderSummary(list);
+    // filter
+    const filtered = currentAttr ? list.filter(r => r.attrs && r.attrs.includes(currentAttr)) : list;
+    recordsBody.innerHTML = "";
+    if(!filtered.length){
+      const tr = document.createElement("tr");
+      const td = document.createElement("td"); td.colSpan = 11; td.style.textAlign = "center"; td.style.color = "var(--muted)"; td.textContent = "該当する記録はありません。";
+      tr.appendChild(td); recordsBody.appendChild(tr); return;
+    }
+    filtered.forEach(rec => {
+      const tr = document.createElement("tr");
+      const td1 = document.createElement("td"); td1.textContent = rec.skills[0] || ""; tr.appendChild(td1);
+      const td2 = document.createElement("td"); td2.textContent = rec.skills[1] || ""; tr.appendChild(td2);
+      ATTRS.forEach(a => { const td = document.createElement("td"); td.innerHTML = rec.attrs && rec.attrs.includes(a) ? '<span class="badge">●</span>' : ''; tr.appendChild(td); });
+      const tdCount = document.createElement("td");
+      const wrapper = document.createElement("div"); wrapper.className = "count-controls";
+      const dec = document.createElement("button"); dec.className = "small-btn"; dec.textContent = "−";
+      const span = document.createElement("span"); span.textContent = rec.count; span.style.minWidth = "28px"; span.style.display = "inline-block";
+      const inc = document.createElement("button"); inc.className = "small-btn"; inc.textContent = "+";
+      dec.addEventListener("click", ()=> updateCount(rec.id, Math.max(1, rec.count - 1)));
+      inc.addEventListener("click", ()=> updateCount(rec.id, rec.count + 1));
+      wrapper.appendChild(dec); wrapper.appendChild(span); wrapper.appendChild(inc);
+      tdCount.appendChild(wrapper); tr.appendChild(tdCount);
+      const tdTime = document.createElement("td"); tdTime.textContent = formatTime(rec.time); tr.appendChild(tdTime);
+      const tdOps = document.createElement("td"); tdOps.className = "ops";
+      const view = document.createElement("button"); view.className = "view"; view.textContent = "表示";
+      const del = document.createElement("button"); del.className = "del"; del.textContent = "削除";
+      view.addEventListener("click", ()=> {
+        const attrsText = rec.attrs && rec.attrs.length ? rec.attrs.join(", ") : "なし";
+        alert(`シリーズスキル1: ${rec.skills[0]}\nシリーズスキル2: ${rec.skills[1]}\n属性: ${attrsText}\n回数: ${rec.count}\n時刻: ${formatTime(rec.time)}`);
+      });
+      del.addEventListener("click", ()=> { if(!confirm(`「${rec.skills[0]} / ${rec.skills[1]}」を削除しますか？`)) return; deleteRecord(rec.id); });
+      tdOps.appendChild(view); tdOps.appendChild(del); tr.appendChild(tdOps);
+      recordsBody.appendChild(tr);
+    });
+  }
+
+  // summary: per-attribute totals and record counts
+  function renderSummary(list){
+    const totals = {};
+    ATTRS.forEach(a => { totals[a] = {records:0, countSum:0}; });
+    list.forEach(r => {
+      ATTRS.forEach(a => {
+        if(r.attrs && r.attrs.includes(a)){
+          totals[a].records += 1;
+          totals[a].countSum += (Number(r.count) || 0);
+        }
+      });
+    });
+    summaryRow.innerHTML = "";
+    ATTRS.forEach(a => {
+      const card = document.createElement("div");
+      card.className = "summary-card";
+      card.textContent = `${a}： ${totals[a].records} 件 / 合計 ${totals[a].countSum} 回`;
+      summaryRow.appendChild(card);
+    });
+  }
+
+  // --- binding ---
   function bind(){
     saveBtn.addEventListener("click", onSave);
     clearAllBtn.addEventListener("click", clearAll);
     openSuggest.addEventListener("click", openModal);
     closeSuggest.addEventListener("click", closeModal);
-    addSuggest.addEventListener("click", ()=> {
-      addSuggestion(newSuggest.value);
-      newSuggest.value = "";
-      newSuggest.focus();
-    });
-    exportCsvBtn.addEventListener("click", exportCsv);
-    exportCsvTopBtn.addEventListener("click", exportCsv);
+    addSuggest.addEventListener("click", ()=> { addSuggestion(newSuggest.value); newSuggest.value = ""; newSuggest.focus(); });
+    exportCsvBtn.addEventListener("click", exportAllCsv);
+    exportCsvTopBtn.addEventListener("click", exportAllCsv);
+    exportAttrCsvBtn.addEventListener("click", exportCurrentAttrCsv);
     importJsonBtn.addEventListener("click", importJson);
-    newSuggest.addEventListener("keydown", (e)=> {
-      if(e.key === "Enter"){
-        e.preventDefault();
-        addSuggestion(newSuggest.value);
-        newSuggest.value = "";
-      }
-    });
-    modal.addEventListener("click", (e)=> {
-      if(e.target === modal) closeModal();
-    });
+    newSuggest.addEventListener("keydown", (e)=> { if(e.key === "Enter"){ e.preventDefault(); addSuggestion(newSuggest.value); newSuggest.value = ""; } });
+    showAllBtn.addEventListener("click", ()=> { currentAttr = null; render(); updateTabs(); });
+    modal.addEventListener("click", (e)=> { if(e.target === modal) closeModal(); });
   }
 
-  function initSuggests(){
-    const list = loadSuggests();
-    populateDatalist(list);
-  }
-
-  function populateDatalist(list){
-    skillList.innerHTML = "";
-    list.forEach(s => {
-      const opt = document.createElement("option");
-      opt.value = s;
-      skillList.appendChild(opt);
-    });
-  }
-
-  function renderSuggestList(){
-    const list = loadSuggests();
-    suggestList.innerHTML = "";
-    list.forEach(s => {
-      const div = document.createElement("div");
-      div.className = "suggest-item";
-      const left = document.createElement("div"); left.textContent = s;
-      const right = document.createElement("div");
-      const del = document.createElement("button"); del.textContent = "削除";
-      del.addEventListener("click", ()=> {
-        if(!confirm(`候補「${s}」を削除しますか？`)) return;
-        const arr = loadSuggests().filter(x => x !== s);
-        saveSuggests(arr);
-        renderSuggestList();
-      });
-      right.appendChild(del);
-      div.appendChild(left); div.appendChild(right);
-      suggestList.appendChild(div);
-    });
-  }
-
+  // init
   init();
 })();
 </script>
