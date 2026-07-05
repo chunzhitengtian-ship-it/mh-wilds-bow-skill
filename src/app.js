@@ -1,12 +1,34 @@
-// ページ読み込み時に動作
 window.addEventListener("DOMContentLoaded", () => {
-  const app = document.getElementById("app");
+  const input = document.getElementById("skillInput");
+  const button = document.getElementById("predictBtn");
+  const result = document.getElementById("result");
 
-  // 表示内容を生成
-  const message = document.createElement("div");
-  message.textContent = "ようこそ！スキル予測ラボへ。";
-  message.style.fontSize = "1.2rem";
-  message.style.marginTop = "20px";
+  button.addEventListener("click", () => {
+    const skill = input.value.trim();
 
-  app.appendChild(message);
+    if (!skill) {
+      result.textContent = "スキル名を入力してください。";
+      result.style.color = "red";
+      return;
+    }
+
+    // 仮の予測ロジック（後でAI連携可能）
+    let prediction;
+    switch (skill.toLowerCase()) {
+      case "溜め段階解放":
+        prediction = "攻撃力が上昇し、矢の威力が強化されます。";
+        break;
+      case "弾導強化":
+        prediction = "矢の飛距離が伸び、命中精度が向上します。";
+        break;
+      case "スタミナ急速回復":
+        prediction = "連射後のスタミナ回復速度が上昇します。";
+        break;
+      default:
+        prediction = "未知のスキルです。データベースに登録されていません。";
+    }
+
+    result.textContent = `予測結果：${prediction}`;
+    result.style.color = "#333";
+  });
 });
